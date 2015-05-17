@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Flasky{% endblock %}
+
+{% block page_content %}
+<div class="jumbotron">
+  <h1>Welcome to RapidTasker!</h1>
+  <p>We're happy to welcome you in our brand new RapidTasker application!! From now on you can add, claim and resolve any ticket you find suitable for you. You'll just need to login. Have a nice day :) </p>
+  <p align=right> RapidTasker upgrade team.</p>
+<!--   <p>{% if name %}{{ name }}{% else %}Stranger{% endif %}<p> -->
+  <!-- <p class="right"><a class="btn btn-primary btn-lg" href="#" role="button">Login</a></p> -->
+  <p class="right"><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#logIn">Login</button></p>
+</div>
+{% endblock %}
