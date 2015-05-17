@@ -26,6 +26,7 @@ class Users(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
+    password = db.Column(db.String(64))
 
     def __repr__(self):
     	return '<User %r>' % self.username
@@ -47,14 +48,19 @@ def internal_server_error(e):
 
 @app.route('/')
 def index():
-	user = Users.query.filter_by(username='Wicher').first()
+	# user = Users.query.filter_by(username='Wicher').first()
 	return render_template('index.html', name=user)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
-        return redirect(url_for('index'))
+        # DBTasks.query.filter_by(request.form.email)
+        # db.session.commit()
+        
+        user_mail = Users.query.filter_by(username = request.form['email']).first()
+        if user_mail:
+            return redirect(url_for('index'))
 
     return render_template('login.html', form=form)
 
@@ -64,6 +70,8 @@ def user(name):
     return render_template('user.html', name=name)
 
 if __name__ == '__main__':
-    manager.run()
     init_db()
+    manager.run()
+    
+
 
