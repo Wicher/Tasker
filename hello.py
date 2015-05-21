@@ -7,16 +7,6 @@ from flask.ext.auth import Auth
 from form_objects.login import LoginForm
 from pprint import pprint
 from flask.ext.login import LoginManager, login_user
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 WTF_CSRF_SECRET_KEY = 'a random string'
 WTF_CSRF_ENABLED = False
@@ -41,19 +31,9 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password = db.Column(db.String(64))
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    is_active = db.Column(db.Boolean, default=True)
-=======
+
     authenticated = db.Column(db.Boolean, default=True)
->>>>>>> Stashed changes
-=======
-    authenticated = db.Column(db.Boolean, default=True)
->>>>>>> Stashed changes
-=======
-    authenticated = db.Column(db.Boolean, default=True)
->>>>>>> Stashed changes
+
 
     def __repr__(self):
         return self.username
@@ -79,23 +59,9 @@ def init_db():
 
 @login_manager.user_loader
 def load_user(userid):
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    return Users.get(userid)
+    # return Users.get_id(userid)
+    return Users.query.filter_by(username=userid).first()
 
-=======
-    # return Users.get_id(userid)
-    return Users.query.filter_by(username=userid).first()
->>>>>>> Stashed changes
-=======
-    # return Users.get_id(userid)
-    return Users.query.filter_by(username=userid).first()
->>>>>>> Stashed changes
-=======
-    # return Users.get_id(userid)
-    return Users.query.filter_by(username=userid).first()
->>>>>>> Stashed changes
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -117,30 +83,11 @@ def index():
 def login():
     form = LoginForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        user = Users.query.filter_by(username=request.form['email']).first()
-        if user and user.password == request.form['password']:
-            login_user(user)
-            return redirect(url_for('index'))
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         # user = Users.query.filter_by(username=request.form['email']).first()
         user = load_user(request.form['email'])
         if user and user.password == request.form['password']:
             login_user(user, force=True)
             return redirect(url_for('user', name=user))
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     return render_template('login.html', form=form)
 
