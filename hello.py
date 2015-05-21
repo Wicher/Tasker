@@ -9,7 +9,10 @@ from pprint import pprint
 from flask.ext.login import LoginManager, login_user
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -40,7 +43,11 @@ class Users(db.Model):
     password = db.Column(db.String(64))
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     is_active = db.Column(db.Boolean, default=True)
+=======
+    authenticated = db.Column(db.Boolean, default=True)
+>>>>>>> Stashed changes
 =======
     authenticated = db.Column(db.Boolean, default=True)
 >>>>>>> Stashed changes
@@ -74,8 +81,13 @@ def init_db():
 def load_user(userid):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     return Users.get(userid)
 
+=======
+    # return Users.get_id(userid)
+    return Users.query.filter_by(username=userid).first()
+>>>>>>> Stashed changes
 =======
     # return Users.get_id(userid)
     return Users.query.filter_by(username=userid).first()
@@ -107,11 +119,14 @@ def login():
     if form.validate_on_submit():
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         user = Users.query.filter_by(username=request.form['email']).first()
         if user and user.password == request.form['password']:
             login_user(user)
             return redirect(url_for('index'))
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         # user = Users.query.filter_by(username=request.form['email']).first()
@@ -120,6 +135,9 @@ def login():
             login_user(user, force=True)
             return redirect(url_for('user', name=user))
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
