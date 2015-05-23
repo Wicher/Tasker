@@ -6,24 +6,22 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.auth import Auth
 from form_objects.login import LoginForm
 from pprint import pprint
-from flask.ext.login import LoginManager, login_user
+from flask.ext.login import LoginManager, login_user, logout_user, login_required
 
 WTF_CSRF_SECRET_KEY = 'a random string'
 WTF_CSRF_ENABLED = False
 
-
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://{0}/users.db'.format(os.path.dirname(__file__))
 app.debug = True
-auth = Auth(app)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://{0}/users.db'.format(os.path.dirname(__file__))
-
+auth = Auth(app)
 db = SQLAlchemy(app)
 
 class Users(db.Model):
@@ -31,8 +29,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password = db.Column(db.String(64))
-    authenticated = db.Column(db.Boolean, default=True)
-
+    authenticated = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return self.username
@@ -43,11 +40,11 @@ class Users(db.Model):
 
     def get_id(self):
         """Return the email address to satisfy Flask-Login's requirements."""
-        return self.username
+        return self.id
 
     def is_authenticated(self):
         """Return True if the user is authenticated."""
-        return self.authenticated
+        return True
 
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
@@ -85,10 +82,17 @@ def login():
         # user = Users.query.filter_by(username=request.form['email']).first()
         user = load_user(request.form['email'])
         if user and user.password == request.form['password']:
-            login_user(user, force=True)
-            return redirect(url_for('user', name=user))
+            login_user(user)
+            # return redirect(url_for('user', name=user))
+            return redirect(url_for('index', name=user))
 
     return render_template('login.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route('/user/<name>')

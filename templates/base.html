@@ -28,12 +28,15 @@
             <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#submitTask">Submit task</button>
             <ul class="nav navbar-nav navbar-right">
                 <li><a data-toggle="modal" data-target="#signUp"><span class="glyphicon glyphicon-user"></span> Sign Up </a></li>
-                <li><a href="{{url_for('login')}}"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
+                {% if current_user.is_authenticated() %}
+                    <li><a href="{{url_for('logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout </a></li>
+                {% else %}
+                    <li><a href="{{url_for('login')}}"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
 </nav>
-
 {% endblock navbar%}
 
 {% block content %}
@@ -70,9 +73,6 @@
         </div>
     </div>
 </div>
-
-<!-- Login Modal -->
-
 
 <!-- Sign up Modal -->
 <div class="modal fade" id="signUp" tabindex="3" role="dialog">
