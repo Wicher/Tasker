@@ -1,11 +1,12 @@
 import os
 import pdb
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, g
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.auth import Auth
 from form_objects.login import LoginForm
+from form_objects.new_task import NewTaskForm
 from pprint import pprint
 from flask.ext.login import LoginManager, login_user, logout_user, login_required, UserMixin
 
@@ -31,6 +32,7 @@ class User(db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     password = db.Column(db.String(64))
     authenticated = db.Column(db.Boolean, default=False)
+    tasks = db.relationship("Task", backref="user")
 
     def __repr__(self):
         return self.username
@@ -46,6 +48,15 @@ class User(db.Model):
 
     def is_anonymous(self):
         return False
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), unique=True, index=True)
+    description = db.Column(db.String(2000), unique=True, index=True)
+    created_at = db.Column(db.DateTime, unique=True, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
 
 def init_db():
     db.create_all(app=app)
@@ -65,10 +76,20 @@ def internal_server_error(e):
     pprint(e)
     return render_template('500.html'), 500
 
+@app.before_request
+def setup_user():
+    if session["user_id"]:
+        user = User.query.get(session["user_id"])
+    else:
+        user = {"name": "Guest"}  # Make it better, use an anonymous User instead
+
+    g.user = user
+
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    tasks = Task.query.all()
+    return render_template('index.html', tasks=tasks)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -91,6 +112,22 @@ def logout():
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', name=name)
+
+@app.route('/new_task', methods=['GET', 'POST'])
+@login_required
+def new_task():
+    form = NewTaskForm(request.form, csrf_enabled=False)
+    if form.validate_on_submit():
+        db.session.add(
+            Task(
+                title=request.form['title'],
+                description=request.form['description'],
+                user_id=g.user.get_id()
+            )
+        )
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('new_task.html', form=form)
 
 if __name__ == '__main__':
     init_db()
