@@ -23,17 +23,13 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        {% if current_user.is_authenticated %}
-
-        {% else %}
-
-        {% endif %}
         <li class="active"><a href="#">LINK 1</a></li>
         <li><a href="#">LINK 2</a></li>
       </ul>
+      {% if current_user.is_authenticated() %}
       <a href="{{url_for('new_task')}}" type="button" class="btn btn-default navbar-btn">Submit task</a>
+      {% endif %}
       <ul class="nav navbar-nav navbar-right">
-        <li><a data-toggle="modal" data-target="#signUp"><span class="glyphicon glyphicon-user"></span> Sign Up </a></li>
         {% if current_user.is_authenticated() %}
         <li><a href="{{url_for('logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout </a></li>
         {% else %}
@@ -60,14 +56,6 @@
     </div>
   </div>
 </nav>
-
-<!-- Submit Modal -->
-<div class="modal fade" id="submitTask" tabindex="1" role="dialog">
-  <div class="modal-dialog">
-
-  </div>
-</div>
-
 {% endblock %}
 
 

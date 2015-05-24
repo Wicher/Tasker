@@ -5,20 +5,16 @@
 {% block page_content %}
 <div class="jumbotron">
   {% if current_user.is_authenticated() %}
-    <h1>Hi {{ current_user.name }}!</h1>
+    <h1>Hi {{ current_user.username }}!</h1>
   {% else %}
     <h1>Welcome to RapidTasker!</h1>
   {% endif %}
-  <p>We're happy to welcome you in our brand new RapidTasker application!! From now on you can add, claim and resolve any ticket you find suitable for you. You'll just need to login. Have a nice day :) </p>
 
-	Hello,
-	{% if current_user.is_authenticated() %}
-		{{ current_user.username }}
-	{% else %}
-		Stranger
-	{% endif %}!
+  <p>We're happy to welcome you in our brand new RapidTasker application!! From now on you can add, claim and resolve any ticket you find suitable for you. You'll just need to login. Have a nice day :) </p>
   <p align=right> RapidTasker upgrade team.</p>
-  <p class="right"><a href="{{url_for('login')}}" class="btn btn-primary btn-lg" role="button">Login</a></p>
+  {% if not current_user.is_authenticated() %}
+  <a href="{{url_for('login')}}" class="btn btn-primary btn-lg" role="button">Login</a>
+  {% endif %}
 </div>
 
 {% for task in tasks %}
