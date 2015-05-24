@@ -78,7 +78,7 @@ def internal_server_error(e):
 
 @app.before_request
 def setup_user():
-    if session["user_id"]:
+    if session.get("user_id"):
         user = User.query.get(session["user_id"])
     else:
         user = {"name": "Guest"}  # Make it better, use an anonymous User instead
