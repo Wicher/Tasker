@@ -88,8 +88,14 @@ def setup_user():
 
 @app.route('/')
 def index():
+    #tasks = Task.query.all()
+    return render_template('index.html')#, tasks=tasks)
+
+@app.route('/view_task')
+@login_required
+def view_task():
     tasks = Task.query.all()
-    return render_template('index.html', tasks=tasks)
+    return render_template('view_task.html', tasks=tasks)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

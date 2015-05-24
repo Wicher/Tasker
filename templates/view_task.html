@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Flasky{% endblock %}
+
+{% block page_content %}
+{% for task in tasks %}
+  <div class="panel panel-default">
+    <div class="panel-heading">{{ task.title }}</div>
+    <div class="panel-body">
+      {{ task.description}}
+    </div>
+    <div class="panel-footer">Requester: {{task.user.username}}</div>
+  </div>
+{% endfor %}
+{% endblock %}
