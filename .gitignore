@@ -1,5 +1,6 @@
 # Custom files
 .idea/
+*.db
 
 # Windows image file caches
 Thumbs.db
