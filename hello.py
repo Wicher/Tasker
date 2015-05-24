@@ -1,12 +1,13 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+import pdb
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.auth import Auth
 from form_objects.login import LoginForm
 from pprint import pprint
-from flask.ext.login import LoginManager, login_user, logout_user, login_required
+from flask.ext.login import LoginManager, login_user, logout_user, login_required, UserMixin
 
 WTF_CSRF_SECRET_KEY = 'a random string'
 WTF_CSRF_ENABLED = False
@@ -24,7 +25,7 @@ bootstrap = Bootstrap(app)
 auth = Auth(app)
 db = SQLAlchemy(app)
 
-class Users(db.Model):
+class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
@@ -35,19 +36,15 @@ class Users(db.Model):
         return self.username
 
     def is_active(self):
-        """True, as all users are active."""
         return True
 
     def get_id(self):
-        """Return the email address to satisfy Flask-Login's requirements."""
         return self.id
 
     def is_authenticated(self):
-        """Return True if the user is authenticated."""
         return True
 
     def is_anonymous(self):
-        """False, as anonymous users aren't supported."""
         return False
 
 def init_db():
@@ -55,8 +52,7 @@ def init_db():
 
 @login_manager.user_loader
 def load_user(userid):
-    # return Users.get_id(userid)
-    return Users.query.filter_by(username=userid).first()
+    return User.query.get(userid)
 
 
 @app.errorhandler(404)
@@ -72,19 +68,16 @@ def internal_server_error(e):
 
 @app.route('/')
 def index():
-	# user = Users.query.filter_by(username='Wicher').first()
-	return render_template('index.html', name=user)
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
-        # user = Users.query.filter_by(username=request.form['email']).first()
-        user = load_user(request.form['email'])
+        user = User.query.filter_by(username=request.form['email']).first()
         if user and user.password == request.form['password']:
             login_user(user)
-            # return redirect(url_for('user', name=user))
-            return redirect(url_for('index', name=user))
+            return redirect(url_for('index'))
 
     return render_template('login.html', form=form)
 
