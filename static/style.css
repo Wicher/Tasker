@@ -3,5 +3,5 @@ p.right	{
 }
 
 textarea {
-	resize: vertical;
+  resize: none;
 }
